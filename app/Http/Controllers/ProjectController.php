@@ -17,7 +17,7 @@ class ProjectController extends Controller
 
         $errors = Validator::make($fields, [
                 'name' => 'required',
-                'status' => 'required',
+                // 'status' => 'required',
                 'startDate' => 'required',
                 'endDate' => 'required'
         ]);
@@ -32,7 +32,8 @@ class ProjectController extends Controller
             'name' => $fields['name'],
             'startDate' => $fields['startDate'],
             'endDate' => $fields['endDate'],
-            'status' => $fields['status'],
+            'status' => Project::NOT_STARTED,
+            'slug' => Project::createSlug($fields['name'])
         ]);
 
         return response([

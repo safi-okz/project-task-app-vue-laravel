@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Str;
 
 class Project extends Model
 {
@@ -15,5 +16,11 @@ class Project extends Model
 
     protected $guarded = [];
 
+    public static function createSlug($name) {
 
+        $code = Str::random(10) . time();
+        $slug = Str::slug($name).'-'.$code;
+
+        return $slug;
+    }
 }
