@@ -9,5 +9,11 @@ class Project extends Model
 {
     use HasFactory;
 
+    const  NOT_STARTED = 0;
+    const  PENDING = 1;
+    const COMPLETED = 2;
+
     protected $guarded = [];
+
+
 }
