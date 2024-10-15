@@ -7,13 +7,30 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Str;
 use App\Models\Project;
-use App\Events\NewUserCreated;
+use App\Models\TaskProgress;
 
 class ProjectController extends Controller
 {
+
+    public function index(Request $request){
+
+        $query = $request->get('query');
+
+        $projects = Project::with(['task_progress']);
+
+        if(!is_null($query) && $query !== '') {
+            $projects->where('name', 'like', '%'.$query.'%')->orderBy('id', 'desc');
+
+            return response(['data' => $projects->paginate(10)], 200);
+        }
+
+        return response(['data' => $projects->paginate(10)], 200);
+    }
+
     public function store(Request $request) {
 
-        $fields = $request->all();
+        return DB::transaction(function() use($request) {
+            $fields = $request->all();
 
         $errors = Validator::make($fields, [
                 'name' => 'required',
@@ -36,10 +53,17 @@ class ProjectController extends Controller
             'slug' => Project::createSlug($fields['name'])
         ]);
 
+        TaskProgress::create([
+            'projectId' => $project->id,
+            'pinned_on_dashboard' => TaskProgress::NOT_PINNED_ON_DASHBOARD,
+            'progress' => TaskProgress::INITIAL_TASK_PERCENT
+        ]);
+
         return response([
             'project' => $project,
             'message' => 'Project Created'
         ]);
+        });
     }
 
     public function edit(Request $request, $id) {

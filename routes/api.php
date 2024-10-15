@@ -11,5 +11,8 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+
+Route::get('/project', [ProjectController::class, 'index']);
 Route::post('/project', [ProjectController::class, 'store']);
 Route::put('/project/edit/{id}', [ProjectController::class, 'edit']);
