@@ -16,3 +16,4 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/project', [ProjectController::class, 'index']);
 Route::post('/project', [ProjectController::class, 'store']);
 Route::put('/project/edit/{id}', [ProjectController::class, 'edit']);
+Route::post('/project/pinned', [ProjectController::class, 'pinnedProject']);

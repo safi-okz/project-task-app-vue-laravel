@@ -95,4 +95,24 @@ class ProjectController extends Controller
             'message' => 'Project updated'
         ]);
     }
+
+    public function pinnedProject(Request $request) {
+
+        $fields = $request->all();
+
+        $errors = Validator::make($fields, [
+                'projectId' => 'required'
+        ]);
+
+        if($errors->fails()){
+            return response($errors->errors()->all(), 422);
+        }
+
+        TaskProgress::where('projectId', $fields['projectId'])->update(
+            [
+                'pinned_on_dashboard' => TaskProgress::PINNED_ON_DASHBOARD
+            ]);
+
+        return response(['message' => "Project Pinned on dashboard"]);
+    }
 }
