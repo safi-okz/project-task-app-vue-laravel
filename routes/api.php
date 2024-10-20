@@ -9,11 +9,16 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::controller(AuthController::class)->group(function () {
+    Route::post('/register', 'register');
+    Route::post('/login', 'login');
+});
 
+Route::controller(ProjectController::class)->group(function(){
 
-Route::get('/project', [ProjectController::class, 'index']);
-Route::post('/project', [ProjectController::class, 'store']);
-Route::put('/project/edit/{id}', [ProjectController::class, 'edit']);
-Route::post('/project/pinned', [ProjectController::class, 'pinnedProject']);
+    Route::get('/project', 'index');
+    Route::post('/project', 'store');
+    Route::put('/project/edit/{id}', 'edit');
+    Route::post('/project/pinned', 'pinnedProject');
+});
+
