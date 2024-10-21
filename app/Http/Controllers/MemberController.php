@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Str;
 use App\Models\Project;
 use App\Models\TaskProgress;
+use App\Models\Member;
 
 class MemberController extends Controller
 {
@@ -15,27 +16,26 @@ class MemberController extends Controller
 
         $query = $request->get('query');
 
-        $projects = Project::with(['task_progress']);
+        $members = Member::select();
+
+        // $members = DB::select('members');
 
         if(!is_null($query) && $query !== '') {
-            $projects->where('name', 'like', '%'.$query.'%')->orderBy('id', 'desc');
+            $members->where('name', 'like', '%'.$query.'%')->orderBy('id', 'desc');
 
-            return response(['data' => $projects->paginate(10)], 200);
+            return response(['data' => $members->paginate(10)], 200);
         }
 
-        return response(['data' => $projects->paginate(10)], 200);
+        return response(['data' => $members->paginate(10)], 200);
     }
 
     public function store(Request $request) {
 
-        return DB::transaction(function() use($request) {
             $fields = $request->all();
 
         $errors = Validator::make($fields, [
                 'name' => 'required',
-                // 'status' => 'required',
-                'startDate' => 'required',
-                'endDate' => 'required'
+                'email' => 'required|email'
         ]);
 
         if($errors->fails()){
@@ -44,25 +44,15 @@ class MemberController extends Controller
 
         // $isValidEmail = filter_var($fiels['email'], FILTER_VALIDATE_EMAIL) ? 1 : 0;
 
-       $project = Project::create([
+       $member = Member::create([
             'name' => $fields['name'],
-            'startDate' => $fields['startDate'],
-            'endDate' => $fields['endDate'],
-            'status' => Project::NOT_STARTED,
-            'slug' => Project::createSlug($fields['name'])
-        ]);
-
-        TaskProgress::create([
-            'projectId' => $project->id,
-            'pinned_on_dashboard' => TaskProgress::NOT_PINNED_ON_DASHBOARD,
-            'progress' => TaskProgress::INITIAL_TASK_PERCENT
+            'email' => $fields['email']
         ]);
 
         return response([
-            'project' => $project,
-            'message' => 'Project Created'
+            'member' => $member,
+            'message' => 'Member Created'
         ]);
-        });
     }
 
     public function edit(Request $request, $id) {
@@ -72,8 +62,7 @@ class MemberController extends Controller
         $errors = Validator::make($fields, [
                 'id' => 'required',
                 'name' => 'required',
-                'startDate' => 'required',
-                'endDate' => 'required'
+                'email' => 'required'
         ]);
 
         if($errors->fails()){
@@ -82,16 +71,14 @@ class MemberController extends Controller
 
         // $isValidEmail = filter_var($fiels['email'], FILTER_VALIDATE_EMAIL) ? 1 : 0;
 
-       $project = Project::where('id', $id)->update([
+       $member = Member::where('id', $id)->update([
         'name' => $fields['name'],
-        'startDate' => $fields['startDate'],
-        'endDate' => $fields['endDate'],
-        'slug' => Project::createSlug($fields['name'])
+        'email' => $fields['email']
     ]);
 
         return response([
-            'project' => $project,
-            'message' => 'Project updated'
+            'member' => $member,
+            'message' => 'Member updated'
         ]);
     }
 
