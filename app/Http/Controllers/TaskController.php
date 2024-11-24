@@ -14,7 +14,8 @@ class TaskController extends Controller
 {
     public function createTask(Request $request) {
 
-        $fields = $request->all();
+        return DB::transaction(function () use ($request) {
+            $fields = $request->all();
 
         $errors = Validator::make($fields, [
                 'name' => 'required',
@@ -26,5 +27,26 @@ class TaskController extends Controller
         if($errors->fails()){
             return response($errors->errors()->all(), 422);
         }
+
+        $task = Task::create([
+            'projectId' => $fields['projectId'],
+            'name' => $fields['name'],
+            'status' => Task::NOT_STARTED
+        ]);
+
+        $members = $fields['memberIds'];
+
+        for($i = 0; $i < count($members); $i++){
+
+            TaskMember::create([
+                'projectId' => $fields['projectId'],
+                'taskId' => $task->id,
+                'memberId' => $members[$i]
+            ]);
+        }
+
+        return response(['message' => 'task successfuly created', 'task' => $task]);
+        });
+
     }
 }
