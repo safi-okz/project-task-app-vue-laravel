@@ -10,4 +10,9 @@ class TaskMember extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    public function member() {
+        // Update the foreign key and local key based on your database schema
+        return $this->hasOne(Member::class, 'id');
+    }
 }

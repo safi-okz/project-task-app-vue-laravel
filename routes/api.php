@@ -22,6 +22,7 @@ Route::controller(ProjectController::class)->group(function(){
     Route::post('/project', 'store');
     Route::put('/project/edit/{id}', 'edit');
     Route::post('/project/pinned', 'pinnedProject');
+    Route::get('/project/{slug}', 'getProject');
 });
 
 Route::controller(MemberController::class)->group(function(){

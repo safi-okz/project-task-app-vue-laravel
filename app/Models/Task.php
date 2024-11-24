@@ -15,4 +15,9 @@ class Task extends Model
 
     protected $guarded = [];
 
+    public function task_members()
+    {
+        return $this->hasMany(TaskMember::class, 'taskId'); // Use the correct foreign key column
+    }
+
 }

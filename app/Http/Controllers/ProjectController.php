@@ -115,4 +115,10 @@ class ProjectController extends Controller
 
         return response(['message' => "Project Pinned on dashboard"]);
     }
+
+    public function getProject(Request $request, $slug) {
+        $project = Project::with(['tasks.task_members.member'])->where('projects.slug', $slug)->first();
+
+        return response(['data' => $project]);
+    }
 }
